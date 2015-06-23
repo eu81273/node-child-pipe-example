@@ -8,11 +8,11 @@ var page = require('webpage').create();
     변수 선언
 */
 //userAgent 설정
-var userAgent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.120 Safari/537.36';
+var userAgent = 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US) AppleWebKit/534.7 (KHTML, like Gecko) Chrome/7.0.517.44 Safari/534.7';
 //리소스 제한시간 10초
 var resourceTimeout = 10000;
 //리소스 다운로드 시도 횟수
-var resourceRequestAttempts = 3;
+var resourceRequestAttempts = 5;
 //리로스 다운로드 여부 체크 간격
 var resourceCheckDuration = 3000;
 //컨텐츠 길이
@@ -38,13 +38,11 @@ var documentReadyCheck = function () {
             phantom.exit(0);
         }, 1000);
     }
-    //변경이 있으면 3초 뒤에 다시 체크
+    //변경이 있으면 resourceCheckDuration 뒤에 다시 체크
     else {
-        console.log("다시 연장", Object.keys(resources));
-
         contentLength = currentLength;
         Object.keys(resources).forEach(function (item, index, array) {
-            if (++resources[item] === resourceRequestAttempts) {
+            if (++resources[item] > resourceRequestAttempts) {
                 delete resources[item];
             }
         });
@@ -69,6 +67,11 @@ page.onResourceTimeout = function (request) {
     delete resources[request.id];
 };
 
+//페이지가 리페인트
+page.repaintRequested = function (e) {
+    console.log(e);
+};
+
 //DOMContentLoaded 이벤트가 발생했을 때
 page.onCallback = function () {
     //정말 로딩이 더이상 없는지 체크
@@ -85,7 +88,7 @@ page.onInitialized = function () {
 };
 
 //페이지 오픈
-page.open('http://www.gsshop.com/index.gs', function (status) {
+page.open('http://www.gsshop.com/prd/detail.gs?prdid=16233854', function (status) {
 	if (status !== 'success') {
 		console.log("ERROR");
 		phantom.exit();

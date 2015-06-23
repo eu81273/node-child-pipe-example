@@ -9,7 +9,7 @@ var phantom = spawn('phantomjs', [path.join(__dirname, 'phantomjs-script.js')]);
 phantom.stdout.pipe(process.stdout, { end: false });
 
 //파일로도 뿌리고,
-phantom.stdout.pipe(myFile);
+//phantom.stdout.pipe(myFile);
 
 phantom.on('exit', function (code) {
 	process.exit(code);
