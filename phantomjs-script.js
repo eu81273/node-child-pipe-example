@@ -34,7 +34,12 @@ var documentReadyCheck = function () {
     //더이상 변경이 없으면, 결과 출력
     if (currentLength === contentLength && !Object.keys(resources).length) {
         window.setTimeout(function () {
-            console.log(page.content);
+
+            var phantomResult = {
+                "files": [],
+                "template": page.content
+            }
+            console.log(JSON.stringify(phantomResult));
             phantom.exit(0);
         }, 1000);
     }
